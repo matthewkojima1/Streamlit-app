@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import os
 import joblib
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import make_column_transformer
@@ -19,12 +20,23 @@ RANDOM_STATE = 123
 
 def load_model(model_path='best_fraud_model.joblib'):
     """
-    Load the pre-trained model
+    Load the pre-trained model with robust error handling
     """
+    # List all files in the current directory for debugging
+    st.sidebar.info(f"Files in current directory: {os.listdir('.')}")
+    
+    # Check if model file exists
+    if not os.path.exists(model_path):
+        st.sidebar.error(f"Model file {model_path} not found!")
+        st.sidebar.warning("Available files: " + ", ".join(os.listdir('.')))
+        return None
+    
     try:
-        return joblib.load(model_path)
+        model = joblib.load(model_path)
+        st.sidebar.success("Model loaded successfully!")
+        return model
     except Exception as e:
-        st.error(f"Error loading model: {e}")
+        st.sidebar.error(f"Error loading model: {e}")
         return None
 
 def preprocess_data(df, predictors, categorical_cols, continuous_cols):
