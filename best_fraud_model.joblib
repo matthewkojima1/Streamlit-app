@@ -1,0 +1,4 @@
+import joblib
+
+# Assuming 'best_model' is your final trained model
+joblib.dump(best_model, 'best_fraud_model.joblib')
